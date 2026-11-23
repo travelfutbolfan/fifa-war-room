@@ -298,8 +298,8 @@ function buildShareSvg() {
   }).join('');
   return '<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920">' +
     '<rect width="1080" height="1920" fill="#0E1A24"/>' +
-    '<text x="60" y="110" font-size="28" letter-spacing="3" fill="#9FB0BC" font-family="Helvetica,Arial,sans-serif">' + L('FIFA PRESIDENTIAL ELECTION · ', 'ELECCIÓN PRESIDENCIAL DE LA FIFA · ') + escX(String(congress).toUpperCase()) + '</text>' +
-    '<text x="60" y="200" font-size="78" fill="#FFFFFF" font-family="Georgia,serif">' + L('FIFA Election War Room', 'Sala de Guerra FIFA') + '</text>' +
+    '<text x="60" y="110" font-size="28" letter-spacing="3" fill="#9FB0BC" font-family="Helvetica,Arial,sans-serif">' + L('FIFA ELECTION WAR ROOM · ', 'SALA DE GUERRA FIFA · ') + escX(String(congress).toUpperCase()) + '</text>' +
+    '<text x="60" y="200" font-size="78" fill="#FFFFFF" font-family="Georgia,serif">' + L('Race to 106', 'Carrera a los 106') + '</text>' +
     '<text x="60" y="270" font-size="38" fill="#F2A97A" font-family="Helvetica,Arial,sans-serif">' + escX(sc.tag) + '</text>' +
     cols + segs +
     '<rect x="' + (mx - 2).toFixed(1) + '" y="624" width="4" height="62" fill="#FFFFFF"/>' +
@@ -660,7 +660,7 @@ function applyLang() {
   const root = document.querySelector('.war');
   if (root) root.classList.toggle('lang-es', lang === 'es');
   document.documentElement.lang = lang;
-  document.title = L('FIFA Election War Room', 'Sala de Guerra FIFA');
+  document.title = L('Race to 106 · FIFA Election War Room', 'Carrera a los 106 · Sala de Guerra FIFA');
   document.querySelectorAll('[data-zoom]').forEach((b) => { const k = b.getAttribute('data-zoom'); b.setAttribute('aria-label', L(ZL[k][0], ZL[k][1])); if (ZT[k]) b.textContent = L(ZT[k][0], ZT[k][1]); });
   const ariaMap = { '.mapctl': ['Map controls', 'Controles del mapa'], '.views': ['Views', 'Vistas'], '#legend-reported': ['Filter the map by position', 'Filtrar el mapa por postura'], '#legend-blocs': ['Filter the map by confederation', 'Filtrar el mapa por confederación'], '.socials': ['Follow Danny Navarro', 'Sigue a Danny Navarro'] };
   Object.keys(ariaMap).forEach((sel) => document.querySelectorAll(sel).forEach((n) => n.setAttribute('aria-label', L(ariaMap[sel][0], ariaMap[sel][1]))));
