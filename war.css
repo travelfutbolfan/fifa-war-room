@@ -290,3 +290,17 @@
 .corr a { color: var(--color-fg); font-weight: 600; }
 @media (max-width: 920px) { .searchwrap { margin-left: 0; } .war .srch { width: 100%; } }
 @media print { .searchwrap { display: none; } }
+
+/* language */
+.war .es{display:none}
+.war.lang-es .en{display:none}
+.war.lang-es .es{display:inline}
+.war.lang-es p.es,.war.lang-es h3.es,.war.lang-es li.es{display:block}
+.war.lang-es li.es{display:list-item}
+.war p.en,.war h3.en,.war li.en{display:block}
+.war li.en{display:list-item}
+.lang{min-width:2.4em}
+.war .lang { padding: 6px 10px; background: var(--color-panel); border: 0; border-right: 1px solid var(--color-border-line); font-size: 13px; cursor: pointer; }
+.war .lang:last-child { border-right: 0; }
+.war .lang.on { background: var(--color-fg); color: var(--color-bg); }
+.war .lang:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }

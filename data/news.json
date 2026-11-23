@@ -1,1 +1,74 @@
-[{"date": "2026-11-19", "headline": "FIFA confirms Diallo, Tashima as Infantino's challengers at 2027 election", "outlet": "Al Jazeera", "url": "https://www.aljazeera.com/sports/2026/11/19/fifa-confirms-diallo-tashima-as-infantinos-challengers-at-2027-election", "summary": "FIFA named three candidatures. The electoral committee now decides on admission, and member associations are notified of admitted candidates by Feb 18, 2027."}, {"date": "2026-11-18", "headline": "FIFA election: Who are Infantino's challengers, and will he be re-elected?", "outlet": "Al Jazeera", "url": "https://www.aljazeera.com/sports/2026/11/18/fifa-president-election-nomination-infantino-diallo-tashima-vega", "summary": "Explainer on the field, the five-association nomination rule, and the debate over whether Infantino can serve a fourth term."}, {"date": "2026-11-17", "headline": "Diallo to challenge Infantino after UEFA backing", "outlet": "Inside World Football", "url": "https://www.insideworldfootball.com/2026/11/17/diallo-to-challenge-infantino-after-uefa-backing/", "summary": ""}, {"date": "2026-11-16", "headline": "UEFA backs France's Philippe Diallo to challenge Infantino in FIFA election", "outlet": "Al Jazeera", "url": "https://www.aljazeera.com/sports/2026/11/16/uefa-backs-frances-philippe-diallo-to-challenge-infantino-in-fifa-election", "summary": "UEFA said its 55 associations unanimously pledged support. The AFC has endorsed Infantino and CONCACAF has no stated position."}, {"date": "2026-10-23", "headline": "AFC president Salman bin Ibrahim Al Khalifa endorses Infantino", "outlet": "Wikipedia (secondary)", "url": "https://en.wikipedia.org/wiki/77th_FIFA_Congress", "summary": "Listed on the 77th Congress page. The AFC had earlier called for a review of FIFA leadership."}, {"date": "2026-08-14", "headline": "New Zealand break ranks with Oceania as FIFA's Infantino divide grows", "outlet": "Al Jazeera", "url": "https://www.aljazeera.com/sports/2026/8/14/new-zealand-break-ranks-with-oceania-as-fifas-infantino-divide-grows", "summary": "New Zealand Football withdrew support. Six Arab federations backed Infantino on Aug 13. UEFA, the AFC and CONCACAF had called for a review."}, {"date": "2026-08-03", "headline": "More European countries withdraw support for Infantino as pressure intensifies", "outlet": "Irish Examiner", "url": "https://www.irishexaminer.com/sport/soccer/arid-41890654.html", "summary": "Finland, England, Wales and Serbia withdrew support and Sweden said it would oppose. Switzerland had not withdrawn."}, {"date": "2026-04-30", "headline": "Africa and Asia back Infantino for unique fourth term as FIFA president", "outlet": "Al Jazeera", "url": "https://www.aljazeera.com/amp/sports/2026/4/30/africa-backing-infantino-for-unique-fourth-term-as-fifa-president", "summary": "CAF and the AFC announced support. Together with CONMEBOL they account for 110 of the 211 votes."}]
+[
+ {
+  "date": "2026-11-19",
+  "headline": "FIFA confirms Diallo, Tashima as Infantino's challengers at 2027 election",
+  "outlet": "Al Jazeera",
+  "url": "https://www.aljazeera.com/sports/2026/11/19/fifa-confirms-diallo-tashima-as-infantinos-challengers-at-2027-election",
+  "summary": "FIFA named three candidatures. The electoral committee now decides on admission, and member associations are notified of admitted candidates by Feb 18, 2027.",
+  "headline_es": "La FIFA confirma a Diallo y Tashima como rivales de Infantino en la elección de 2027",
+  "summary_es": "La FIFA nombró tres candidaturas. El comité electoral decidirá ahora sobre su admisión y las asociaciones miembro serán notificadas de los candidatos admitidos antes del 18 de febrero de 2027."
+ },
+ {
+  "date": "2026-11-18",
+  "headline": "FIFA election: Who are Infantino's challengers, and will he be re-elected?",
+  "outlet": "Al Jazeera",
+  "url": "https://www.aljazeera.com/sports/2026/11/18/fifa-president-election-nomination-infantino-diallo-tashima-vega",
+  "summary": "Explainer on the field, the five-association nomination rule, and the debate over whether Infantino can serve a fourth term.",
+  "headline_es": "Elección de la FIFA: quiénes son los rivales de Infantino y si será reelegido",
+  "summary_es": "Explicación del panorama, de la regla de nominación con cinco asociaciones y del debate sobre si Infantino puede cumplir un cuarto mandato."
+ },
+ {
+  "date": "2026-11-17",
+  "headline": "Diallo to challenge Infantino after UEFA backing",
+  "outlet": "Inside World Football",
+  "url": "https://www.insideworldfootball.com/2026/11/17/diallo-to-challenge-infantino-after-uefa-backing/",
+  "summary": "",
+  "headline_es": "Diallo desafiará a Infantino tras el respaldo de la UEFA",
+  "summary_es": ""
+ },
+ {
+  "date": "2026-11-16",
+  "headline": "UEFA backs France's Philippe Diallo to challenge Infantino in FIFA election",
+  "outlet": "Al Jazeera",
+  "url": "https://www.aljazeera.com/sports/2026/11/16/uefa-backs-frances-philippe-diallo-to-challenge-infantino-in-fifa-election",
+  "summary": "UEFA said its 55 associations unanimously pledged support. The AFC has endorsed Infantino and CONCACAF has no stated position.",
+  "headline_es": "La UEFA respalda al francés Philippe Diallo para desafiar a Infantino en la elección de la FIFA",
+  "summary_es": "La UEFA dijo que sus 55 asociaciones se comprometieron por unanimidad a apoyarlo. La AFC ha respaldado a Infantino y la CONCACAF no ha declarado una posición."
+ },
+ {
+  "date": "2026-10-23",
+  "headline": "AFC president Salman bin Ibrahim Al Khalifa endorses Infantino",
+  "outlet": "Wikipedia (secondary)",
+  "url": "https://en.wikipedia.org/wiki/77th_FIFA_Congress",
+  "summary": "Listed on the 77th Congress page. The AFC had earlier called for a review of FIFA leadership.",
+  "headline_es": "El presidente de la AFC, Salman bin Ibrahim Al Khalifa, respalda a Infantino",
+  "summary_es": "Figura en la página del 77.º Congreso. La AFC había pedido antes una revisión del liderazgo de la FIFA."
+ },
+ {
+  "date": "2026-08-14",
+  "headline": "New Zealand break ranks with Oceania as FIFA's Infantino divide grows",
+  "outlet": "Al Jazeera",
+  "url": "https://www.aljazeera.com/sports/2026/8/14/new-zealand-break-ranks-with-oceania-as-fifas-infantino-divide-grows",
+  "summary": "New Zealand Football withdrew support. Six Arab federations backed Infantino on Aug 13. UEFA, the AFC and CONCACAF had called for a review.",
+  "headline_es": "Nueva Zelanda rompe filas con Oceanía mientras crece la división en torno a Infantino",
+  "summary_es": "New Zealand Football retiró su apoyo. Seis federaciones árabes respaldaron a Infantino el 13 ago. La UEFA, la AFC y la CONCACAF habían pedido una revisión."
+ },
+ {
+  "date": "2026-08-03",
+  "headline": "More European countries withdraw support for Infantino as pressure intensifies",
+  "outlet": "Irish Examiner",
+  "url": "https://www.irishexaminer.com/sport/soccer/arid-41890654.html",
+  "summary": "Finland, England, Wales and Serbia withdrew support and Sweden said it would oppose. Switzerland had not withdrawn.",
+  "headline_es": "Más países europeos retiran su apoyo a Infantino mientras aumenta la presión",
+  "summary_es": "Finlandia, Inglaterra, Gales y Serbia retiraron su apoyo y Suecia dijo que se opondría. Suiza no lo había retirado."
+ },
+ {
+  "date": "2026-04-30",
+  "headline": "Africa and Asia back Infantino for unique fourth term as FIFA president",
+  "outlet": "Al Jazeera",
+  "url": "https://www.aljazeera.com/amp/sports/2026/4/30/africa-backing-infantino-for-unique-fourth-term-as-fifa-president",
+  "summary": "CAF and the AFC announced support. Together with CONMEBOL they account for 110 of the 211 votes.",
+  "headline_es": "África y Asia respaldan a Infantino para un cuarto mandato inédito como presidente de la FIFA",
+  "summary_es": "La CAF y la AFC anunciaron su apoyo. Junto con la CONMEBOL suman 110 de los 211 votos."
+ }
+]

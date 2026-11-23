@@ -1,12 +1,28 @@
 const CONF_ORDER = ['UEFA', 'CAF', 'AFC', 'CONCACAF', 'OFC', 'CONMEBOL'];
-const CAND_NAME = { inf: 'Infantino', diallo: 'Diallo', tashima: 'Tashima', none: 'No pick yet' };
-const KIND_LABEL = { withdrawal: 'Support withdrawn', endorsement: 'Endorsement', bloc: 'Confederation', candidacy: 'Candidacy', rule: 'Process', context: 'Context', note: 'Note' };
+/* ---------- language: EN | ES ---------- */
+const MONTHS_ES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+let lang = 'en';
+try {
+  const q = new URLSearchParams(location.search).get('lang');
+  if (q === 'es' || q === 'en') lang = q; else { const sv = localStorage.getItem('fwr-lang'); if (sv === 'es' || sv === 'en') lang = sv; }
+} catch (e) {}
+const L = (en, es) => (lang === 'es' ? es : en);
+const dict = (en, es) => new Proxy({}, { get: (_, k) => (lang === 'es' ? es : en)[k] });
+const pickL = (o, f) => (lang === 'es' && o[f + '_es'] ? o[f + '_es'] : o[f]);
+const nm = (a) => pickL(a, 'name');
+const nameOf = (n) => { const A = dash.data('associations'); const a = A.status === 'ok' ? A.data.find((x) => x.name === n) : null; return a ? nm(a) : n; };
+const CAND_NAME = { inf: 'Infantino', diallo: 'Diallo', tashima: 'Tashima', get none() { return L('No pick yet', 'Sin voto aún'); } };
+const KIND_LABEL = dict(
+  { withdrawal: 'Support withdrawn', endorsement: 'Endorsement', bloc: 'Confederation', candidacy: 'Candidacy', rule: 'Process', context: 'Context', note: 'Note' },
+  { withdrawal: 'Apoyo retirado', endorsement: 'Respaldo', bloc: 'Confederación', candidacy: 'Candidatura', rule: 'Proceso', context: 'Contexto', note: 'Nota' });
 const DAY = 86400000;
 const baseCand = (s) => ({ inf_d: 'inf', inf_b: 'inf', diallo_d: 'diallo', diallo_b: 'diallo', tashima: 'tashima' }[s] || 'none');
 const state = { view: 'map', colorBy: 'pledge', tiles: false, tlFocus: null, mode: 'reported', brush: 'inf', focus: null, pinned: null, hover: null, evId: null, evNames: new Set(), replayIdx: null, replayT: Infinity, replayLabel: '' };
 const scen = {};
-const fmtDay = d3.utcFormat('%b %-d, %Y');
-const fmtShort = d3.utcFormat('%b %-d');
+const _fd = d3.utcFormat('%b %-d, %Y'), _fs = d3.utcFormat('%b %-d'), _fl = d3.utcFormat('%B %-d, %Y');
+const fmtDay = (d) => (lang === 'es' ? d.getUTCDate() + ' ' + MONTHS_ES[d.getUTCMonth()].slice(0, 3) + ' ' + d.getUTCFullYear() : _fd(d));
+const fmtShort = (d) => (lang === 'es' ? d.getUTCDate() + ' ' + MONTHS_ES[d.getUTCMonth()].slice(0, 3) : _fs(d));
+const fmtLong = (d) => (lang === 'es' ? d.getUTCDate() + ' de ' + MONTHS_ES[d.getUTCMonth()] + ' de ' + d.getUTCFullYear() : _fl(d));
 const parseDay = d3.utcParse('%Y-%m-%d');
 
 /* view state from the link: #map, #map-confed, #whatif, #timeline, #learn */
@@ -16,7 +32,9 @@ function deriveMode() { state.mode = state.view === 'whatif' ? 'whatif' : state.
 deriveMode();
 
 const effCand = (a) => scen[a.name] || baseCand(a.status);
-const RS_LABEL = { inf_d: 'Infantino, declared', inf_b: 'Infantino, via confederation', diallo_d: 'Diallo, declared', diallo_b: 'Diallo, via UEFA', tashima: 'Tashima, declared', anti: 'Against Infantino, no candidate named', und: 'No position found', unk: 'Nothing dated yet' };
+const RS_LABEL = dict(
+  { inf_d: 'Infantino, declared', inf_b: 'Infantino, via confederation', diallo_d: 'Diallo, declared', diallo_b: 'Diallo, via UEFA', tashima: 'Tashima, declared', anti: 'Against Infantino, no candidate named', und: 'No position found', unk: 'Nothing dated yet' },
+  { inf_d: 'Infantino, declarado', inf_b: 'Infantino, vía confederación', diallo_d: 'Diallo, declarado', diallo_b: 'Diallo, vía UEFA', tashima: 'Tashima, declarado', anti: 'Contra Infantino, sin candidato nombrado', und: 'Sin postura encontrada', unk: 'Aún nada con fecha' });
 let rcache = { t: null, A: null, E: null, map: null };
 function replayMap(T) {
   const A = dash.data('associations'), E = dash.data('events');
@@ -42,7 +60,7 @@ const effStatus = (a) => {
 };
 const keyOf = (a) => (state.mode === 'whatif' ? effCand(a) : state.mode === 'blocs' ? a.conf : effStatus(a));
 const clsOf = (a) => (state.mode === 'whatif' ? 'c-' + effCand(a) : state.mode === 'blocs' ? 'k-' + a.conf : 's-' + effStatus(a));
-const posText = (a) => (state.mode === 'whatif' ? CAND_NAME[effCand(a)] + (scen[a.name] ? ' (your pick)' : ' (from reports)') : state.mode === 'blocs' ? a.conf : state.mode === 'replay' ? RS_LABEL[effStatus(a)] : a.position);
+const posText = (a) => (state.mode === 'whatif' ? CAND_NAME[effCand(a)] + (scen[a.name] ? L(' (your pick)', ' (tu voto)') : L(' (from reports)', ' (según reportes)')) : state.mode === 'blocs' ? a.conf : RS_LABEL[state.mode === 'replay' ? effStatus(a) : a.status]);
 const el$ = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text !== undefined) n.textContent = text; return n; };
 const safeUrl = (u) => typeof u === 'string' && /^https?:\/\//i.test(u);
 
@@ -59,7 +77,7 @@ function changedNames() {
 }
 const isDim = (a, changed) => (state.focus && keyOf(a) !== state.focus) || (state.mode === 'momentum' && !changed.has(a.name));
 
-const REDRAW = ['replay', 'map', 'grid', 'detail', 'topbar', 'alerts', 'alertnote', 'latest', 'cands', 'news', 'fact', 'cnt'];
+const REDRAW = ['search', 'countdown', 'share', 'replay', 'map', 'grid', 'detail', 'topbar', 'alerts', 'alertnote', 'latest', 'cands', 'news', 'fact', 'cnt'];
 function redraw() { REDRAW.forEach((n) => dash.draw(n)); }
 function pick(list) {
   if (!list || !list.length) return;
@@ -97,8 +115,8 @@ dash.draw('fact', (el) => {
   const f = dash.data('facts');
   const r = f.status === 'ok' ? f.data.find((x) => x.key === whereKey(el)) : null;
   if (!r) { el.textContent = '—'; return; }
-  if (r.key === 'asof') { const d = parseDay(r.value); el.textContent = d ? d3.utcFormat('%B %-d, %Y')(d) : String(r.value); return; }
-  el.textContent = String(r.value);
+  if (r.key === 'asof') { const d = parseDay(r.value); el.textContent = d ? fmtLong(d) : String(r.value); return; }
+  el.textContent = String(lang === 'es' && r.value_es ? r.value_es : r.value);
 });
 
 /* ---------- scoreboard: one function feeds the top bar and the share image ---------- */
@@ -122,7 +140,7 @@ function score() {
     const keys = ['inf_d', 'inf_b', 'diallo_d', 'diallo_b', 'tashima', 'anti', 'und'].concat(rp ? ['unk'] : []);
     segs = keys.map((k) => ({ cls: 's-' + k, n: g(k), label: RS_LABEL[k] }));
   }
-  const tag = wi ? 'What-if scenario' : rp ? 'Replay: ' + (state.replayLabel || 'today') : 'Reported pledges';
+  const tag = wi ? L('What-if scenario', 'Escenario hipotético') : rp ? L('Replay: ', 'Repetición: ') + (state.replayLabel || L('today', 'hoy')) : L('Reported pledges', 'Compromisos reportados');
   return { members, maj, cands, segs, tag };
 }
 
@@ -134,7 +152,7 @@ dash.draw('topbar', (el) => {
   cands.forEach((c) => {
     const won = c.n >= maj;
     const box = el$('div', 'ct ' + c.cls + (won ? ' win' : ''));
-    box.append(el$('b', '', String(c.n)), el$('span', '', c.name), el$('i', '', won ? 'Majority reached' : (maj - c.n) + ' short of ' + maj));
+    box.append(el$('b', '', String(c.n)), el$('span', '', c.name), el$('i', '', won ? L('Majority reached', 'Mayoría alcanzada') : L((maj - c.n) + ' short of ' + maj, 'Faltan ' + (maj - c.n) + ' de ' + maj)));
     top.appendChild(box);
   });
   top.appendChild(el$('span', 'tally-tag', tag));
@@ -146,7 +164,7 @@ dash.draw('topbar', (el) => {
   const pct = (maj / members) * 100;
   const mark = el$('div', 'tally-mark' + (pct > 70 ? ' flip' : ''));
   mark.style.left = pct + '%';
-  mark.appendChild(el$('span', '', 'Majority: ' + maj));
+  mark.appendChild(el$('span', '', L('Majority: ', 'Mayoría: ') + maj));
   bar.append(track, mark);
   el.replaceChildren(top, bar);
 });
@@ -160,9 +178,9 @@ dash.calc('steps', {
     const by = new Map();
     events.filter((e) => ['withdrawal', 'endorsement', 'bloc', 'candidacy'].includes(e.kind)).forEach((e) => {
       if (!by.has(e.date)) by.set(e.date, []);
-      by.get(e.date).push(e.headline);
+      by.get(e.date).push(e);
     });
-    return [...by.keys()].sort().map((date) => ({ date, text: by.get(date).join(' · ') }));
+    return [...by.keys()].sort().map((date) => ({ date, text: by.get(date).map((e) => e.headline).join(' · '), text_es: by.get(date).map((e) => e.headline_es || e.headline).join(' · ') }));
   },
 });
 
@@ -171,8 +189,9 @@ dash.draw('countdown', {
   mount(el) {
     const box = el$('div', 'cd');
     const parts = ['days', 'hrs', 'min', 'sec'].map((lab) => { const c = el$('div', 'cd-c'); const b = el$('b', '', '—'); c.append(b, el$('span', '', lab)); box.appendChild(c); return b; });
-    el.replaceChildren(el$('span', 'cmd-label', 'Until the vote'), box);
-    const made = { parts, target: null, timer: null };
+    const lab = el$('span', 'cmd-label', '');
+    el.replaceChildren(lab, box);
+    const made = { parts, target: null, timer: null, lab, box };
     made.tick = () => {
       if (made.target === null) return;
       let ms = Math.max(0, made.target - Date.now());
@@ -185,6 +204,8 @@ dash.draw('countdown', {
     return made;
   },
   update(el, made) {
+    made.lab.textContent = L('Until the vote', 'Faltan para la votación');
+    made.box.querySelectorAll('.cd-c span').forEach((n, i) => { n.textContent = L(['days', 'hrs', 'min', 'sec'], ['días', 'h', 'min', 's'])[i]; });
     const f = dash.data('facts');
     const r = f.status === 'ok' ? f.data.find((x) => x.key === 'congress') : null;
     const d = r ? d3.utcParse('%d %B %Y')(String(r.value)) : null;
@@ -198,26 +219,28 @@ dash.draw('countdown', {
 /* ---------- replay controls ---------- */
 dash.draw('replay', {
   mount(el) {
-    const play = el$('button', 'rp-play', 'Play'); play.type = 'button';
-    const range = el$('input'); range.type = 'range'; range.min = '0'; range.step = '1'; range.setAttribute('aria-label', 'Replay position');
+    const play = el$('button', 'rp-play', L('Play', 'Reproducir')); play.type = 'button';
+    const range = el$('input'); range.type = 'range'; range.min = '0'; range.step = '1'; range.setAttribute('aria-label', L('Replay position', 'Posición de la repetición'));
     const date = el$('span', 'rp-date', '');
     const row = el$('div', 'rp-row'); row.append(play, range, date);
     const text = el$('div', 'rp-text', '');
     el.replaceChildren(row, text);
     const made = { play, range, date, text, timer: null, n: 0, steps: [] };
-    const stop = () => { if (made.timer) { clearInterval(made.timer); made.timer = null; } play.textContent = 'Play'; };
+    const stop = () => { if (made.timer) { clearInterval(made.timer); made.timer = null; } play.textContent = L('Play', 'Reproducir'); };
     const apply = (i) => { state.replayIdx = i; redraw(); };
     range.oninput = () => { stop(); apply(+range.value); };
     play.onclick = () => {
       if (made.timer) { stop(); return; }
       if (state.replayIdx === null || state.replayIdx >= made.n) apply(0);
-      play.textContent = 'Pause';
+      play.textContent = L('Pause', 'Pausa');
       made.timer = setInterval(() => { if (state.replayIdx >= made.n) { stop(); return; } apply(state.replayIdx + 1); }, 1100);
     };
     made.stop = stop;
     return made;
   },
   update(el, made) {
+    if (!made.timer) made.play.textContent = L('Play', 'Reproducir');
+    made.range.setAttribute('aria-label', L('Replay position', 'Posición de la repetición'));
     const S = dash.data('steps');
     if (S.status !== 'ok' || !S.data.length) return;
     made.steps = S.data; made.n = S.data.length + 1;
@@ -225,9 +248,9 @@ dash.draw('replay', {
     if (state.replayIdx === null || state.replayIdx > made.n) state.replayIdx = made.n;
     const i = state.replayIdx;
     let label, body, T;
-    if (i === 0) { const d = parseDay(made.steps[0].date); T = d.getTime() - DAY; label = 'Start'; body = 'Before ' + fmtDay(d) + ': no dated positions in the log yet.'; }
-    else if (i >= made.n) { T = Infinity; label = 'Today'; body = 'Current reported positions, including stances that have no date.'; }
-    else { const st = made.steps[i - 1]; const d = parseDay(st.date); T = d.getTime(); label = fmtDay(d); body = st.text; }
+    if (i === 0) { const d = parseDay(made.steps[0].date); T = d.getTime() - DAY; label = L('Start', 'Inicio'); body = L('Before ' + fmtDay(d) + ': no dated positions in the log yet.', 'Antes del ' + fmtDay(d) + ': aún no hay posturas con fecha en el registro.'); }
+    else if (i >= made.n) { T = Infinity; label = L('Today', 'Hoy'); body = L('Current reported positions, including stances that have no date.', 'Posturas reportadas actuales, incluidas las que no tienen fecha.'); }
+    else { const st = made.steps[i - 1]; const d = parseDay(st.date); T = d.getTime(); label = fmtDay(d); body = lang === 'es' && st.text_es ? st.text_es : st.text; }
     state.replayT = T; state.replayLabel = label;
     made.range.value = String(i);
     made.date.textContent = label;
@@ -243,7 +266,7 @@ const escX = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&
 function buildShareSvg() {
   const sc = score(), A = dash.data('associations'), G = dash.data('mapgeo'), F = dash.data('facts');
   if (!sc || A.status !== 'ok' || G.status !== 'ok' || F.status !== 'ok') return null;
-  const congress = (F.data.find((r) => r.key === 'congress') || {}).value || '';
+  const cr = F.data.find((r) => r.key === 'congress') || {}; const congress = (lang === 'es' && cr.value_es ? cr.value_es : cr.value) || '';
   const changed = changedNames();
   const byFeat = new Map();
   A.data.forEach((a) => { if (a.feat) { if (!byFeat.has(a.feat)) byFeat.set(a.feat, []); byFeat.get(a.feat).push(a); } });
@@ -266,41 +289,41 @@ function buildShareSvg() {
     const cx = 60 + i * 330, won = c.n >= sc.maj;
     return '<text x="' + cx + '" y="520" font-size="150" font-family="Georgia,serif" fill="' + (SHARE_COLORS[c.cls] || '#fff') + '">' + c.n + '</text>' +
       '<text x="' + cx + '" y="568" font-size="36" fill="#FFFFFF" font-family="Helvetica,Arial,sans-serif">' + escX(c.name) + '</text>' +
-      '<text x="' + cx + '" y="606" font-size="26" fill="' + (won ? '#5FD39B' : '#9FB0BC') + '" font-family="Helvetica,Arial,sans-serif">' + (won ? 'Majority reached' : (sc.maj - c.n) + ' short of ' + sc.maj) + '</text>';
+      '<text x="' + cx + '" y="606" font-size="26" fill="' + (won ? '#5FD39B' : '#9FB0BC') + '" font-family="Helvetica,Arial,sans-serif">' + (won ? L('Majority reached', 'Mayoría alcanzada') : L((sc.maj - c.n) + ' short of ' + sc.maj, 'Faltan ' + (sc.maj - c.n) + ' de ' + sc.maj)) + '</text>';
   }).join('');
   const legend = sc.segs.filter((g) => g.n > 0).map((g, i) => {
     const lx = 60 + (i % 2) * 500, ly = 1400 + Math.floor(i / 2) * 64;
     return '<rect x="' + lx + '" y="' + (ly - 26) + '" width="30" height="30" rx="6" fill="' + (SHARE_COLORS[g.cls] || '#9AA3A8') + '"/>' +
-      '<text x="' + (lx + 44) + '" y="' + ly + '" font-size="27" fill="#E6EDF2" font-family="Helvetica,Arial,sans-serif">' + escX(g.label.replace('Against Infantino, no candidate named', 'Against Infantino').replace('via confederation', 'via bloc')) + ' · ' + g.n + '</text>';
+      '<text x="' + (lx + 44) + '" y="' + ly + '" font-size="27" fill="#E6EDF2" font-family="Helvetica,Arial,sans-serif">' + escX(g.label.replace('Against Infantino, no candidate named', 'Against Infantino').replace('via confederation', 'via bloc').replace('Contra Infantino, sin candidato nombrado', 'Contra Infantino').replace('vía confederación', 'vía bloque')) + ' · ' + g.n + '</text>';
   }).join('');
   return '<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920">' +
     '<rect width="1080" height="1920" fill="#0E1A24"/>' +
-    '<text x="60" y="110" font-size="28" letter-spacing="3" fill="#9FB0BC" font-family="Helvetica,Arial,sans-serif">FIFA PRESIDENTIAL ELECTION · ' + escX(String(congress).toUpperCase()) + '</text>' +
-    '<text x="60" y="200" font-size="78" fill="#FFFFFF" font-family="Georgia,serif">FIFA Election War Room</text>' +
+    '<text x="60" y="110" font-size="28" letter-spacing="3" fill="#9FB0BC" font-family="Helvetica,Arial,sans-serif">' + L('FIFA PRESIDENTIAL ELECTION · ', 'ELECCIÓN PRESIDENCIAL DE LA FIFA · ') + escX(String(congress).toUpperCase()) + '</text>' +
+    '<text x="60" y="200" font-size="78" fill="#FFFFFF" font-family="Georgia,serif">' + L('FIFA Election War Room', 'Sala de Guerra FIFA') + '</text>' +
     '<text x="60" y="270" font-size="38" fill="#F2A97A" font-family="Helvetica,Arial,sans-serif">' + escX(sc.tag) + '</text>' +
     cols + segs +
     '<rect x="' + (mx - 2).toFixed(1) + '" y="624" width="4" height="62" fill="#FFFFFF"/>' +
-    '<text x="' + (mx - 10).toFixed(1) + '" y="716" text-anchor="end" font-size="26" font-weight="700" fill="#FFFFFF" font-family="Helvetica,Arial,sans-serif">' + sc.maj + ' needed to win</text>' +
+    '<text x="' + (mx - 10).toFixed(1) + '" y="716" text-anchor="end" font-size="26" font-weight="700" fill="#FFFFFF" font-family="Helvetica,Arial,sans-serif">' + L(sc.maj + ' needed to win', 'Se necesitan ' + sc.maj + ' para ganar') + '</text>' +
     '<g transform="translate(0,760) scale(1.08)">' + paths + '</g>' +
     legend +
-    '<text x="60" y="1760" font-size="40" font-weight="700" fill="#FFFFFF" font-family="Helvetica,Arial,sans-serif">Build your own map</text>' +
-    '<text x="60" y="1812" font-size="32" fill="#9FB0BC" font-family="Helvetica,Arial,sans-serif">Created by Danny Navarro · @travelfutbolfan</text>' +
-    '<text x="60" y="1860" font-size="24" fill="#6F8392" font-family="Helvetica,Arial,sans-serif">Pledges are public statements, not votes. The ballot is secret.</text>' +
+    '<text x="60" y="1760" font-size="40" font-weight="700" fill="#FFFFFF" font-family="Helvetica,Arial,sans-serif">' + L('Build your own map', 'Arma tu propio mapa') + '</text>' +
+    '<text x="60" y="1812" font-size="32" fill="#9FB0BC" font-family="Helvetica,Arial,sans-serif">' + L('Created by', 'Creado por') + ' Danny Navarro · @travelfutbolfan</text>' +
+    '<text x="60" y="1860" font-size="24" fill="#6F8392" font-family="Helvetica,Arial,sans-serif">' + L('Pledges are public statements, not votes. The ballot is secret.', 'Los compromisos son declaraciones públicas, no votos. El voto es secreto.') + '</text>' +
     '</svg>';
 }
 
 dash.draw('share', {
   mount(el) {
-    const btn = el$('button', 'sharebtn', 'Share this map'); btn.type = 'button';
+    const btn = el$('button', 'sharebtn', L('Share this map', 'Compartir este mapa')); btn.type = 'button';
     const ov = el$('div', 'shareov'); ov.hidden = true;
-    ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-label', 'Share image');
+    ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-label', L('Share image', 'Imagen para compartir'));
     el.replaceChildren(btn, ov);
     const close = () => { ov.hidden = true; ov.replaceChildren(); };
     const showBox = (content, note, href) => {
       const box = el$('div', 'sharebox');
       const row = el$('div', 'sharerow');
-      if (href) { const a = el$('a', '', 'Save PNG'); a.href = href; a.download = 'race-to-106.png'; row.appendChild(a); }
-      const c = el$('button', '', 'Close'); c.type = 'button'; c.onclick = close; row.appendChild(c);
+      if (href) { const a = el$('a', '', L('Save PNG', 'Guardar PNG')); a.href = href; a.download = 'race-to-106.png'; row.appendChild(a); }
+      const c = el$('button', '', L('Close', 'Cerrar')); c.type = 'button'; c.onclick = close; row.appendChild(c);
       box.append(content, el$('p', '', note), row);
       ov.replaceChildren(box); ov.hidden = false; c.focus();
     };
@@ -311,7 +334,7 @@ dash.draw('share', {
       if (!svg) return;
       const inlineFallback = () => {
         const doc = new DOMParser().parseFromString(svg, 'image/svg+xml');
-        showBox(document.importNode(doc.documentElement, true), 'Take a screenshot of this image, or press and hold it to save.', null);
+        showBox(document.importNode(doc.documentElement, true), L('Take a screenshot of this image, or press and hold it to save.', 'Haz una captura de esta imagen, o mantenla pulsada para guardarla.'), null);
       };
       const img = new Image();
       img.onload = () => {
@@ -319,8 +342,8 @@ dash.draw('share', {
           const cv = document.createElement('canvas'); cv.width = 1080; cv.height = 1920;
           cv.getContext('2d').drawImage(img, 0, 0, 1080, 1920);
           const url = cv.toDataURL('image/png');
-          const prev = new Image(); prev.alt = 'Share image preview';
-          prev.onload = () => showBox(prev, 'Save it, then post it to your story or reel.', url);
+          const prev = new Image(); prev.alt = L('Share image preview', 'Vista previa de la imagen');
+          prev.onload = () => showBox(prev, L('Save it, then post it to your story or reel.', 'Guárdala y súbela a tu historia o reel.'), url);
           prev.onerror = inlineFallback;
           prev.src = url;
         } catch (err) { inlineFallback(); }
@@ -330,7 +353,7 @@ dash.draw('share', {
     };
     return { btn, ov };
   },
-  update() {},
+  update(el, made) { made.btn.textContent = L('Share this map', 'Compartir este mapa'); made.ov.setAttribute('aria-label', L('Share image', 'Imagen para compartir')); },
 });
 
 /* ---------- map ---------- */
@@ -341,12 +364,12 @@ dash.draw('map', {
     const svg = document.createElementNS(NS, 'svg');
     svg.setAttribute('viewBox', '0 0 1000 520');
     svg.setAttribute('role', 'img');
-    svg.setAttribute('aria-label', 'World map of FIFA member associations colored by reported support in the 2027 presidential election');
+    svg.setAttribute('aria-label', L('World map of FIFA member associations colored by reported support in the 2027 presidential election', 'Mapa mundial de las asociaciones miembro de la FIFA coloreado según el apoyo reportado en la elección presidencial de 2027'));
     svg.setAttribute('class', 'mapsvg');
     const g = document.createElementNS(NS, 'g');
     svg.appendChild(g);
     const tip = el$('div', 'tip'); tip.hidden = true;
-    const msg = el$('div', 'mapmsg', 'Loading the map…');
+    const msg = el$('div', 'mapmsg', L('Loading the map…', 'Cargando el mapa…'));
     box.append(svg, tip, msg);
     el.replaceChildren(box);
     const zoom = d3.zoom().scaleExtent([1, 14]).translateExtent([[0, 0], [1000, 520]])
@@ -365,9 +388,10 @@ dash.draw('map', {
   },
   update(el, made) {
     const A = dash.data('associations'), G = dash.data('mapgeo');
-    if (A.status === 'error' || G.status === 'error') { made.msg.textContent = 'The map did not load.'; made.msg.hidden = false; return; }
-    if (A.status !== 'ok' || G.status !== 'ok') { made.msg.textContent = 'Loading the map…'; made.msg.hidden = false; return; }
+    if (A.status === 'error' || G.status === 'error') { made.msg.textContent = L('The map did not load.', 'El mapa no se cargó.'); made.msg.hidden = false; return; }
+    if (A.status !== 'ok' || G.status !== 'ok') { made.msg.textContent = L('Loading the map…', 'Cargando el mapa…'); made.msg.hidden = false; return; }
     made.msg.hidden = true;
+    made.svg.setAttribute('aria-label', L('World map of FIFA member associations colored by reported support in the 2027 presidential election', 'Mapa mundial de las asociaciones miembro de la FIFA coloreado según el apoyo reportado en la elección presidencial de 2027'));
     const changed = changedNames();
     const byFeat = new Map();
     A.data.forEach((a) => { if (a.feat) { if (!byFeat.has(a.feat)) byFeat.set(a.feat, []); byFeat.get(a.feat).push(a); } });
@@ -388,7 +412,7 @@ dash.draw('map', {
         const m = byFeat.get(d.n);
         if (!m) { made.tip.hidden = true; return; }
         const r = made.box.getBoundingClientRect();
-        made.tip.replaceChildren(...m.map((a) => el$('div', '', a.name + ': ' + posText(a))));
+        made.tip.replaceChildren(...m.map((a) => el$('div', '', nm(a) + ': ' + posText(a))));
         made.tip.hidden = false;
         made.tip.style.left = Math.max(4, Math.min(e.clientX - r.left + 12, r.width - 196)) + 'px';
         made.tip.style.top = (e.clientY - r.top + 12) + 'px';
@@ -402,26 +426,26 @@ dash.draw('map', {
 /* ---------- detail panel ---------- */
 dash.draw('detail', (el) => {
   const A = dash.data('associations'), E = dash.data('events');
-  if (A.status !== 'ok') { el.replaceChildren(el$('p', 'muted', A.status === 'error' ? 'The data did not load.' : 'Loading…')); return; }
+  if (A.status !== 'ok') { el.replaceChildren(el$('p', 'muted', A.status === 'error' ? L('The data did not load.', 'Los datos no se cargaron.') : L('Loading…', 'Cargando…'))); return; }
   const name = state.hover || state.pinned;
   const a = name && A.data.find((r) => r.name === name);
-  if (!a) { el.replaceChildren(el$('p', 'muted', 'Nothing selected yet. Click a country on the map, or a tile, to see who has backed whom.')); return; }
+  if (!a) { el.replaceChildren(el$('p', 'muted', L('Nothing selected yet. Click a country on the map, or a tile, to see who has backed whom.', 'Nada seleccionado aún. Haz clic en un país del mapa, o en un recuadro, para ver quién apoya a quién.'))); return; }
   const meta = el$('div', 'meta');
   const whatif = state.mode === 'whatif';
-  meta.append(el$('span', 'pill ' + (whatif ? 'c-' + effCand(a) : 's-' + effStatus(a)), whatif || state.mode === 'replay' ? posText(a) : a.position), el$('span', '', a.conf));
+  meta.append(el$('span', 'pill ' + (whatif ? 'c-' + effCand(a) : 's-' + effStatus(a)), whatif || state.mode === 'replay' ? posText(a) : RS_LABEL[a.status]), el$('span', '', a.conf));
   const ul = el$('ul');
-  String(a.notes || '').split('\n').filter(Boolean).forEach((t) => ul.appendChild(el$('li', '', t)));
-  const parts = [el$('h3', '', a.name), meta, ul];
+  String(pickL(a, 'notes') || '').split('\n').filter(Boolean).forEach((t) => ul.appendChild(el$('li', '', t)));
+  const parts = [el$('h3', '', nm(a)), meta, ul];
   if (E.status === 'ok') {
     const mine = E.data.filter((e) => expandMembers(e, A.data).includes(a.name)).sort((x, y) => String(y.date).localeCompare(String(x.date)));
     if (mine.length) {
       const tl = el$('ul', 'tl');
-      mine.forEach((e) => { const li = el$('li'); const d = eventDate(e); li.append(el$('b', '', d ? fmtShort(d) : e.date), document.createTextNode(e.headline)); tl.appendChild(li); });
-      parts.push(el$('h4', 'muted', 'Change log'), tl);
+      mine.forEach((e) => { const li = el$('li'); const d = eventDate(e); li.append(el$('b', '', d ? fmtShort(d) : e.date), document.createTextNode(pickL(e, 'headline'))); tl.appendChild(li); });
+      parts.push(el$('h4', 'muted', L('Change log', 'Registro de cambios')), tl);
     }
   }
   const srcs = el$('div', 'srcs');
-  String(a.sources || '').split('\n').filter(Boolean).forEach((line) => {
+  String(pickL(a, 'sources') || '').split('\n').filter(Boolean).forEach((line) => {
     const i = line.lastIndexOf('|'); const label = line.slice(0, i), url = line.slice(i + 1);
     if (!safeUrl(url)) { srcs.appendChild(el$('span', '', label)); return; }
     const l = el$('a', '', label); l.href = url; l.target = '_blank'; l.rel = 'noopener noreferrer'; srcs.appendChild(l);
@@ -433,7 +457,7 @@ dash.draw('detail', (el) => {
 /* ---------- tile grid ---------- */
 dash.draw('grid', (el) => {
   const A = dash.data('associations');
-  if (A.status !== 'ok') { el.replaceChildren(el$('p', 'muted', A.status === 'error' ? 'The data did not load.' : 'Loading…')); return; }
+  if (A.status !== 'ok') { el.replaceChildren(el$('p', 'muted', A.status === 'error' ? L('The data did not load.', 'Los datos no se cargaron.') : L('Loading…', 'Cargando…'))); return; }
   const changed = changedNames();
   const blocks = CONF_ORDER.map((conf) => {
     const m = A.data.filter((a) => a.conf === conf);
@@ -443,7 +467,7 @@ dash.draw('grid', (el) => {
     m.forEach((a) => {
       const b = el$('button', 'tile ' + clsOf(a));
       b.type = 'button';
-      b.setAttribute('aria-label', a.name + ': ' + posText(a));
+      b.setAttribute('aria-label', nm(a) + ': ' + posText(a));
       if (isDim(a, changed)) b.classList.add('dim');
       if (state.pinned === a.name) b.classList.add('sel');
       if (state.evNames.has(a.name)) b.classList.add('hl');
@@ -465,12 +489,12 @@ dash.draw('alertnote', (p) => {
   const latest = [...E.data].sort((a, b) => String(b.date).localeCompare(String(a.date)))[0];
   const ld = latest && eventDate(latest);
   if (state.view === 'timeline' && state.tlFocus) {
-    const x = el$('button', 'linkbtn', 'Show all'); x.type = 'button';
+    const x = el$('button', 'linkbtn', L('Show all', 'Ver todo')); x.type = 'button';
     x.onclick = () => { state.tlFocus = null; redraw(); };
-    p.replaceChildren(document.createTextNode('Showing changes for ' + state.tlFocus + '. '), x);
+    p.replaceChildren(document.createTextNode(L('Showing changes for ', 'Mostrando cambios de ') + nameOf(state.tlFocus) + '. '), x);
     return;
   }
-  p.textContent = E.data.length + ' changes in the log. Latest entry: ' + (ld ? fmtDay(ld) : 'none') + '.';
+  p.textContent = L(E.data.length + ' changes in the log. Latest entry: ' + (ld ? fmtDay(ld) : 'none') + '.', E.data.length + ' cambios en el registro. Última entrada: ' + (ld ? fmtDay(ld) : 'ninguna') + '.');
 });
 
 function eventList(ol, rows, A, empty) {
@@ -482,14 +506,14 @@ function eventList(ol, rows, A, empty) {
     const d = eventDate(e);
     const meta = el$('span', 'al-meta');
     meta.append(el$('span', '', d ? fmtShort(d) : e.date), el$('span', 'al-kind ' + e.kind, KIND_LABEL[e.kind] || e.kind));
-    b.append(meta, el$('span', 'al-h', e.headline));
+    b.append(meta, el$('span', 'al-h', pickL(e, 'headline')));
     b.onclick = () => {
       if (state.evId === e.id) { state.evId = null; state.evNames = new Set(); }
       else { state.evId = e.id; state.evNames = new Set(expandMembers(e, A.data)); const first = [...state.evNames][0]; if (first) state.pinned = first; }
       redraw();
     };
     li.appendChild(b);
-    if (safeUrl(e.url)) { const a = el$('a', 'al-src', e.outlet || 'Source'); a.href = e.url; a.target = '_blank'; a.rel = 'noopener noreferrer'; li.appendChild(a); }
+    if (safeUrl(e.url)) { const a = el$('a', 'al-src', e.outlet || L('Source', 'Fuente')); a.href = e.url; a.target = '_blank'; a.rel = 'noopener noreferrer'; li.appendChild(a); }
     return li;
   }));
 }
@@ -497,16 +521,16 @@ const sortedEvents = (E) => [...E.data].sort((a, b) => String(b.date).localeComp
 
 dash.draw('alerts', (ol) => {
   const A = dash.data('associations'), E = dash.data('events');
-  if (E.status !== 'ok' || A.status !== 'ok') { ol.replaceChildren(el$('li', 'al-empty', E.status === 'error' ? 'The change log did not load.' : 'Loading…')); return; }
+  if (E.status !== 'ok' || A.status !== 'ok') { ol.replaceChildren(el$('li', 'al-empty', E.status === 'error' ? L('The change log did not load.', 'El registro de cambios no se cargó.') : L('Loading…', 'Cargando…'))); return; }
   let rows = sortedEvents(E);
   if (state.view === 'timeline' && state.tlFocus) rows = rows.filter((e) => expandMembers(e, A.data).includes(state.tlFocus));
-  eventList(ol, rows, A, state.tlFocus ? 'No logged changes for ' + state.tlFocus + '.' : 'No changes logged yet.');
+  eventList(ol, rows, A, state.tlFocus ? L('No logged changes for ' + nameOf(state.tlFocus) + '.', 'No hay cambios registrados para ' + nameOf(state.tlFocus) + '.') : L('No changes logged yet.', 'Aún no hay cambios registrados.'));
 });
 
 dash.draw('latest', (ol) => {
   const A = dash.data('associations'), E = dash.data('events');
-  if (E.status !== 'ok' || A.status !== 'ok') { ol.replaceChildren(el$('li', 'al-empty', E.status === 'error' ? 'The change log did not load.' : 'Loading…')); return; }
-  eventList(ol, sortedEvents(E).slice(0, 5), A, 'No changes logged yet.');
+  if (E.status !== 'ok' || A.status !== 'ok') { ol.replaceChildren(el$('li', 'al-empty', E.status === 'error' ? L('The change log did not load.', 'El registro de cambios no se cargó.') : L('Loading…', 'Cargando…'))); return; }
+  eventList(ol, sortedEvents(E).slice(0, 5), A, L('No changes logged yet.', 'Aún no hay cambios registrados.'));
 });
 
 /* ---------- candidates and news ---------- */
@@ -516,8 +540,8 @@ dash.draw('cands', (el) => {
   const cls = { 'Gianni Infantino': 'c-inf', 'Philippe Diallo': 'c-diallo', 'Kozo Tashima': 'c-tashima' };
   el.replaceChildren(...C.data.map((c) => {
     const card = el$('article', 'cand ' + (cls[c.name] || ''));
-    card.append(el$('h3', '', c.name), el$('div', 'role', c.country + ' · ' + c.role), el$('p', 'st', c.status), el$('p', '', c.backing), el$('p', 'role', c.note));
-    if (safeUrl(c.url)) { const a = el$('a', 'more', 'Source'); a.href = c.url; a.target = '_blank'; a.rel = 'noopener noreferrer'; card.appendChild(a); }
+    card.append(el$('h3', '', c.name), el$('div', 'role', pickL(c, 'country') + ' · ' + pickL(c, 'role')), el$('p', 'st', pickL(c, 'status')), el$('p', '', pickL(c, 'backing')), el$('p', 'role', pickL(c, 'note')));
+    if (safeUrl(c.url)) { const a = el$('a', 'more', L('Source', 'Fuente')); a.href = c.url; a.target = '_blank'; a.rel = 'noopener noreferrer'; card.appendChild(a); }
     return card;
   }));
 });
@@ -530,10 +554,10 @@ dash.draw('news', (ol) => {
     const li = el$('li');
     const d = parseDay(n.date);
     const h = el$('div', 'h');
-    if (safeUrl(n.url)) { const a = el$('a', '', n.headline); a.href = n.url; a.target = '_blank'; a.rel = 'noopener noreferrer'; h.appendChild(a); } else h.textContent = n.headline;
+    if (safeUrl(n.url)) { const a = el$('a', '', pickL(n, 'headline')); a.href = n.url; a.target = '_blank'; a.rel = 'noopener noreferrer'; h.appendChild(a); } else h.textContent = pickL(n, 'headline');
     const right = el$('div'); right.append(h, el$('div', 'o', n.outlet));
     li.append(el$('div', 'd', d ? fmtDay(d) : String(n.date)), right);
-    if (n.summary) li.appendChild(el$('div', 's', n.summary));
+    if (n.summary) li.appendChild(el$('div', 's', pickL(n, 'summary')));
     return li;
   }));
 });
@@ -547,26 +571,31 @@ function focusAssoc(a) {
 }
 dash.draw('search', {
   mount(el) {
-    const input = el$('input', 'srch'); input.type = 'search'; input.placeholder = 'Find a country…'; input.autocomplete = 'off';
-    input.setAttribute('aria-label', 'Find a country or association'); input.setAttribute('list', 'assoc-list');
+    const input = el$('input', 'srch'); input.type = 'search'; input.placeholder = L('Find a country…', 'Busca un país…'); input.autocomplete = 'off';
+    input.setAttribute('aria-label', L('Find a country or association', 'Busca un país o asociación')); input.setAttribute('list', 'assoc-list');
     const dl = document.createElement('datalist'); dl.id = 'assoc-list';
-    el.replaceChildren(el$('span', 'cmd-label', 'Search'), input, dl);
+    const lab = el$('span', 'cmd-label', L('Search', 'Buscar'));
+    el.replaceChildren(lab, input, dl);
     const go = (loose) => {
       const A = dash.data('associations'); if (A.status !== 'ok') return;
       const q = input.value.trim().toLowerCase(); if (!q) return;
-      const exact = A.data.find((x) => x.name.toLowerCase() === q);
-      const part = A.data.filter((x) => x.name.toLowerCase().includes(q));
+      const hit = (x, f) => [x.name, x.name_es].some((v) => v && f(v.toLowerCase()));
+      const exact = A.data.find((x) => hit(x, (v) => v === q));
+      const part = A.data.filter((x) => hit(x, (v) => v.includes(q)));
       const a = exact || (loose ? part[0] : null);
-      if (a) { input.value = a.name; focusAssoc(a); }
+      if (a) { input.value = nm(a); focusAssoc(a); }
     };
     input.addEventListener('input', () => go(false));
     input.addEventListener('keydown', (e) => { if (e.key === 'Enter') go(true); });
-    return { input, dl };
+    return { input, dl, lab };
   },
   update(el, made) {
+    made.lab.textContent = L('Search', 'Buscar');
+    made.input.placeholder = L('Find a country…', 'Busca un país…');
+    made.input.setAttribute('aria-label', L('Find a country or association', 'Busca un país o asociación'));
     const A = dash.data('associations');
     if (A.status !== 'ok') return;
-    made.dl.replaceChildren(...A.data.map((x) => { const o = document.createElement('option'); o.value = x.name; return o; }));
+    made.dl.replaceChildren(...A.data.map((x) => { const o = document.createElement('option'); o.value = nm(x); return o; }));
   },
   unmount() {},
 });
@@ -593,7 +622,7 @@ function syncUI() {
   show('#tilepane', state.tiles);
   show('#zoomgrp', !state.tiles);
   show('#map-hint', !state.tiles);
-  document.querySelectorAll('#tiles-btn').forEach((b) => { b.textContent = state.tiles ? 'Back to the map' : 'All 211 as tiles'; b.setAttribute('aria-pressed', state.tiles ? 'true' : 'false'); });
+  document.querySelectorAll('#tiles-btn').forEach((b) => { b.textContent = state.tiles ? L('Back to the map', 'Volver al mapa') : L('All 211 as tiles', '211 en recuadros'); b.setAttribute('aria-pressed', state.tiles ? 'true' : 'false'); });
   setPressed('.view', 'data-view', v);
   setPressed('.cb', 'data-cb', state.colorBy);
   syncFocus();
@@ -625,6 +654,27 @@ document.querySelectorAll('.act').forEach((b) => b.addEventListener('click', () 
   redraw();
 }));
 
+const ZL = { in: ['Zoom in', 'Acercar'], out: ['Zoom out', 'Alejar'], reset: ['Reset zoom', 'Restablecer zoom'] };
+const ZT = { reset: ['Reset', 'Restablecer'] };
+function applyLang() {
+  const root = document.querySelector('.war');
+  if (root) root.classList.toggle('lang-es', lang === 'es');
+  document.documentElement.lang = lang;
+  document.title = L('FIFA Election War Room', 'Sala de Guerra FIFA');
+  document.querySelectorAll('[data-zoom]').forEach((b) => { const k = b.getAttribute('data-zoom'); b.setAttribute('aria-label', L(ZL[k][0], ZL[k][1])); if (ZT[k]) b.textContent = L(ZT[k][0], ZT[k][1]); });
+  const ariaMap = { '.mapctl': ['Map controls', 'Controles del mapa'], '.views': ['Views', 'Vistas'], '#legend-reported': ['Filter the map by position', 'Filtrar el mapa por postura'], '#legend-blocs': ['Filter the map by confederation', 'Filtrar el mapa por confederación'], '.socials': ['Follow Danny Navarro', 'Sigue a Danny Navarro'] };
+  Object.keys(ariaMap).forEach((sel) => document.querySelectorAll(sel).forEach((n) => n.setAttribute('aria-label', L(ariaMap[sel][0], ariaMap[sel][1]))));
+  setPressed('.lang', 'data-lang', lang);
+  syncUI();
+}
+function setLang(l) {
+  lang = l;
+  try { localStorage.setItem('fwr-lang', l); } catch (e) {}
+  try { const u = new URL(location.href); u.searchParams.set('lang', l); history.replaceState(null, '', u.toString()); } catch (e) {}
+  applyLang(); redraw();
+}
+document.querySelectorAll('.lang').forEach((b) => b.addEventListener('click', () => setLang(b.getAttribute('data-lang'))));
+
 window.addEventListener('beforeprint', () => { document.querySelectorAll('.pane').forEach((p) => { p.hidden = false; }); redraw(); });
 window.addEventListener('afterprint', () => { syncUI(); redraw(); });
-syncUI();
+applyLang();

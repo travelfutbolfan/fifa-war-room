@@ -1,1 +1,58 @@
-[{"name": "Gianni Infantino", "country": "Switzerland", "role": "FIFA president since 2016, seeking a fourth term", "backing": "Endorsed by CAF, the AFC and CONMEBOL, and by dozens of individual federations. Says he has the support of the vast majority of associations.", "status": "Candidature confirmed Nov 19, pending admission by the electoral committee", "note": "Faces a dispute over term limits: critics point to Article 33 of the FIFA statutes, and the FIFA Council ruled in December 2022 that his first three years do not count.", "url": "https://www.aljazeera.com/sports/2026/11/18/fifa-president-election-nomination-infantino-diallo-tashima-vega"}, {"name": "Philippe Diallo", "country": "France", "role": "President of the French Football Federation since January 2023", "backing": "Backed by UEFA, whose 55 associations are reported to have pledged unanimous support.", "status": "Candidature confirmed Nov 19, pending admission by the electoral committee", "note": "Announced with the support of the UEFA associations on the FIFA Council and the UEFA executive committee.", "url": "https://www.aljazeera.com/sports/2026/11/19/fifa-confirms-diallo-tashima-as-infantinos-challengers-at-2027-election"}, {"name": "Kozo Tashima", "country": "Japan", "role": "Honorary president of the Japan Football Association, FIFA Council member since 2015", "backing": "No confederation endorsement reported. Japan has never fielded a FIFA presidential candidate.", "status": "Candidature confirmed Nov 19, pending admission by the electoral committee", "note": "Has put his own chances at 20 to 30 percent, according to Al Jazeera.", "url": "https://www.aljazeera.com/sports/2026/11/18/fifa-president-election-nomination-infantino-diallo-tashima-vega"}, {"name": "Ramon Vega", "country": "Switzerland", "role": "Former Switzerland defender", "backing": "No endorsements reported.", "status": "Announced his intention to run, but was not among the candidates FIFA named", "note": "Declared on Oct 7, 2026. FIFA's Nov 19 release lists only Diallo, Infantino and Tashima.", "url": "https://www.aljazeera.com/sports/2026/11/19/fifa-confirms-diallo-tashima-as-infantinos-challengers-at-2027-election"}]
+[
+ {
+  "name": "Gianni Infantino",
+  "country": "Switzerland",
+  "role": "FIFA president since 2016, seeking a fourth term",
+  "backing": "Endorsed by CAF, the AFC and CONMEBOL, and by dozens of individual federations. Says he has the support of the vast majority of associations.",
+  "status": "Candidature confirmed Nov 19, pending admission by the electoral committee",
+  "note": "Faces a dispute over term limits: critics point to Article 33 of the FIFA statutes, and the FIFA Council ruled in December 2022 that his first three years do not count.",
+  "url": "https://www.aljazeera.com/sports/2026/11/18/fifa-president-election-nomination-infantino-diallo-tashima-vega",
+  "role_es": "Presidente de la FIFA desde 2016, busca un cuarto mandato",
+  "backing_es": "Respaldado por la CAF, la AFC y la CONMEBOL, y por decenas de federaciones individuales. Dice contar con el apoyo de la gran mayoría de las asociaciones.",
+  "status_es": "Candidatura confirmada el 19 nov; pendiente de admisión por el comité electoral",
+  "note_es": "Enfrenta una disputa sobre los límites de mandatos: los críticos señalan el artículo 33 de los estatutos de la FIFA, y el Consejo de la FIFA dictaminó en diciembre de 2022 que sus primeros tres años no cuentan.",
+  "country_es": "Suiza"
+ },
+ {
+  "name": "Philippe Diallo",
+  "country": "France",
+  "role": "President of the French Football Federation since January 2023",
+  "backing": "Backed by UEFA, whose 55 associations are reported to have pledged unanimous support.",
+  "status": "Candidature confirmed Nov 19, pending admission by the electoral committee",
+  "note": "Announced with the support of the UEFA associations on the FIFA Council and the UEFA executive committee.",
+  "url": "https://www.aljazeera.com/sports/2026/11/19/fifa-confirms-diallo-tashima-as-infantinos-challengers-at-2027-election",
+  "role_es": "Presidente de la Federación Francesa de Fútbol desde enero de 2023",
+  "backing_es": "Respaldado por la UEFA, cuyas 55 asociaciones, según se informa, se comprometieron por unanimidad a apoyarlo.",
+  "status_es": "Candidatura confirmada el 19 nov; pendiente de admisión por el comité electoral",
+  "note_es": "Anunciado con el apoyo de las asociaciones de la UEFA en el Consejo de la FIFA y del comité ejecutivo de la UEFA.",
+  "country_es": "Francia"
+ },
+ {
+  "name": "Kozo Tashima",
+  "country": "Japan",
+  "role": "Honorary president of the Japan Football Association, FIFA Council member since 2015",
+  "backing": "No confederation endorsement reported. Japan has never fielded a FIFA presidential candidate.",
+  "status": "Candidature confirmed Nov 19, pending admission by the electoral committee",
+  "note": "Has put his own chances at 20 to 30 percent, according to Al Jazeera.",
+  "url": "https://www.aljazeera.com/sports/2026/11/18/fifa-president-election-nomination-infantino-diallo-tashima-vega",
+  "role_es": "Presidente honorario de la Federación Japonesa de Fútbol y miembro del Consejo de la FIFA desde 2015",
+  "backing_es": "No se informó de respaldo de ninguna confederación. Japón nunca había presentado un candidato a la presidencia de la FIFA.",
+  "status_es": "Candidatura confirmada el 19 nov; pendiente de admisión por el comité electoral",
+  "note_es": "Calcula sus propias posibilidades entre el 20 y el 30 por ciento, según Al Jazeera.",
+  "country_es": "Japón"
+ },
+ {
+  "name": "Ramon Vega",
+  "country": "Switzerland",
+  "role": "Former Switzerland defender",
+  "backing": "No endorsements reported.",
+  "status": "Announced his intention to run, but was not among the candidates FIFA named",
+  "note": "Declared on Oct 7, 2026. FIFA's Nov 19 release lists only Diallo, Infantino and Tashima.",
+  "url": "https://www.aljazeera.com/sports/2026/11/19/fifa-confirms-diallo-tashima-as-infantinos-challengers-at-2027-election",
+  "role_es": "Ex defensa de la selección de Suiza",
+  "backing_es": "No se informó de respaldos.",
+  "status_es": "Anunció su intención de postularse, pero no figura entre los candidatos que nombró la FIFA",
+  "note_es": "Lo declaró el 7 oct 2026. El comunicado de la FIFA del 19 nov menciona solo a Diallo, Infantino y Tashima.",
+  "country_es": "Suiza"
+ }
+]
