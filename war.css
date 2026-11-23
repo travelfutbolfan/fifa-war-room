@@ -282,3 +282,11 @@
 .war .soc-th { background: #222; box-shadow: inset 0 0 0 1px #444; }
 @media (max-width: 920px) { .bottom .socials { grid-auto-flow: row; justify-items: start; } }
 @media (prefers-reduced-motion: reduce) { .war .soc:hover { transform: none; } }
+
+/* search and corrections */
+.searchwrap { margin-left: auto; display: grid; gap: 3px; }
+.war .srch { width: 210px; height: 36px; padding: 0 12px; border: 1px solid var(--color-border-line); border-radius: 10px; background: var(--color-panel); color: var(--color-fg); font: inherit; font-size: 13px; }
+.war .srch:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
+.corr a { color: var(--color-fg); font-weight: 600; }
+@media (max-width: 920px) { .searchwrap { margin-left: 0; } .war .srch { width: 100%; } }
+@media print { .searchwrap { display: none; } }

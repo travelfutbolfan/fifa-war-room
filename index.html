@@ -4,6 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>FIFA Election War Room</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://travelfutbolfan.github.io/fifa-war-room/">
+<meta property="og:image" content="https://travelfutbolfan.github.io/fifa-war-room/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="FIFA Election War Room">
+<meta name="twitter:description" content="Track the March 2027 FIFA presidential election. Who backs whom, can anyone reach 106, and how it got here.">
+<meta name="twitter:image" content="https://travelfutbolfan.github.io/fifa-war-room/og.png">
 <meta name="description" content="Who backs whom in the March 2027 FIFA presidential election: a live map of all 211 voting associations, a what-if tool, and a timeline. Created by Danny Navarro, @travelfutbolfan.">
 <meta property="og:title" content="FIFA Election War Room">
 <meta property="og:description" content="Track the March 2027 FIFA presidential election. Who backs whom, can anyone reach 106, and how it got here.">
@@ -47,6 +57,7 @@ body{font-family:var(--font-anthropic-sans);font-size:14px}
       <button type="button" class="cb" data-cb="confed" aria-pressed="false">Confederation</button>
     </div>
   </div>
+  <div class="searchwrap" data-draw="search" data-source="associations"></div>
 </div>
 
 <div class="main">
@@ -76,6 +87,7 @@ body{font-family:var(--font-anthropic-sans);font-size:14px}
         <p class="vhint">Click any country to see its pledge, sources and history.</p>
         <div class="detail" data-draw="detail" data-source="associations events"></div>
         <p class="prose" id="lede">Colors show the public position reported for each of the <b data-draw="fact" data-source="facts" data-field="value" data-where="key=members">—</b> voting associations. Only <b data-draw="cnt" data-source="tally" data-field="count" data-where="key=inf_d">—</b> have declared for Infantino themselves; the rest come from confederation endorsements. Ballots are secret, so these are pledges, not votes.</p>
+        <p class="prose corr">Spot something wrong or missing? <a href="https://ig.me/m/travelfutbolfan" target="_blank" rel="noopener noreferrer">Send a correction or tip</a> with a link to the source. Nothing goes on the map without one.</p>
         <h3 class="sechead">Latest changes</h3>
         <ol class="al-list" data-draw="latest" data-source="events associations"></ol>
         <button type="button" class="linkbtn" data-goto="timeline">See the full timeline</button>
@@ -173,6 +185,7 @@ body{font-family:var(--font-anthropic-sans);font-size:14px}
           </ul>
         </details>
 
+        <p class="prose corr">Spot something wrong or missing? <a href="https://ig.me/m/travelfutbolfan" target="_blank" rel="noopener noreferrer">Send a correction or tip</a> with a link to the source.</p>
         <p class="war-foot">FIFA Election War Room, created by Danny Navarro (<b>@travelfutbolfan</b>). Corrections with a source are welcome.</p>
       </section>
 

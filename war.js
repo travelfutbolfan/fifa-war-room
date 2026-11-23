@@ -538,6 +538,39 @@ dash.draw('news', (ol) => {
   }));
 });
 
+/* ---------- country search ---------- */
+function focusAssoc(a) {
+  state.pinned = a.name;
+  if (state.view === 'timeline') state.tlFocus = a.name;
+  if (state.view === 'learn') { state.view = 'map'; changed(); return; }
+  redraw();
+}
+dash.draw('search', {
+  mount(el) {
+    const input = el$('input', 'srch'); input.type = 'search'; input.placeholder = 'Find a country…'; input.autocomplete = 'off';
+    input.setAttribute('aria-label', 'Find a country or association'); input.setAttribute('list', 'assoc-list');
+    const dl = document.createElement('datalist'); dl.id = 'assoc-list';
+    el.replaceChildren(el$('span', 'cmd-label', 'Search'), input, dl);
+    const go = (loose) => {
+      const A = dash.data('associations'); if (A.status !== 'ok') return;
+      const q = input.value.trim().toLowerCase(); if (!q) return;
+      const exact = A.data.find((x) => x.name.toLowerCase() === q);
+      const part = A.data.filter((x) => x.name.toLowerCase().includes(q));
+      const a = exact || (loose ? part[0] : null);
+      if (a) { input.value = a.name; focusAssoc(a); }
+    };
+    input.addEventListener('input', () => go(false));
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') go(true); });
+    return { input, dl };
+  },
+  update(el, made) {
+    const A = dash.data('associations');
+    if (A.status !== 'ok') return;
+    made.dl.replaceChildren(...A.data.map((x) => { const o = document.createElement('option'); o.value = x.name; return o; }));
+  },
+  unmount() {},
+});
+
 /* ---------- controls (listeners and view state only) ---------- */
 function setPressed(sel, attr, value) {
   document.querySelectorAll(sel).forEach((b) => {
