@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FIFA Election War Room</title>
+<meta name="description" content="Who backs whom in the March 2027 FIFA presidential election: a live map of all 211 voting associations, a what-if tool, and a timeline. Created by Danny Navarro, @travelfutbolfan.">
+<meta property="og:title" content="FIFA Election War Room">
+<meta property="og:description" content="Track the March 2027 FIFA presidential election. Who backs whom, can anyone reach 106, and how it got here.">
+<style>
+:root{--color-fg:#1a1a1a;--color-fg-muted:#5b6770;--color-bg:#fff;--color-panel:#f6f7f8;--color-border-line:#d8dde1;--color-ok:#1a7f4b;--font-anthropic-sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;--font-anthropic-serif:Georgia,"Times New Roman",serif;--cds-radius:10px}
+@media (prefers-color-scheme: dark){:root{--color-fg:#eef1f3;--color-fg-muted:#9fb0bc;--color-bg:#0e1a24;--color-panel:#15232f;--color-border-line:#2a3a47;--color-ok:#5fd39b}}
+html,body{margin:0;background:var(--color-bg);color:var(--color-fg)}
+body{font-family:var(--font-anthropic-sans);font-size:14px}
+#app{padding:12px 16px}
+</style>
+<link rel="stylesheet" href="war.css">
+</head>
+<body>
+<div id="app">
+<div class="war">
+
+<header class="top">
+  <div class="brand">
+    <p class="war-kicker">FIFA presidential election · <b data-draw="fact" data-source="facts" data-field="value" data-where="key=congress">—</b></p>
+    <h1 id="title" class="war-title">FIFA Election War Room</h1>
+    <p class="war-credit">Created by Danny Navarro, <b>@travelfutbolfan</b></p>
+  </div>
+  <div class="tally" data-draw="topbar" data-source="tally facts associations"></div>
+  <div class="corner">
+    <div class="cdwrap" data-draw="countdown" data-source="facts"></div>
+    <p class="asof">Data as of <b data-draw="fact" data-source="facts" data-field="value" data-where="key=asof">—</b></p>
+  </div>
+</header>
+
+<div class="toolbar">
+  <nav class="views" aria-label="Views">
+    <button type="button" class="view on" data-view="map" aria-pressed="true"><b>Map</b><span>Who backs whom</span></button>
+    <button type="button" class="view" data-view="whatif" aria-pressed="false"><b>What-if</b><span>Can anyone reach 106?</span></button>
+    <button type="button" class="view" data-view="timeline" aria-pressed="false"><b>Timeline</b><span>How it got here</span></button>
+    <button type="button" class="view" data-view="learn" aria-pressed="false"><b>Learn</b><span>Candidates and rules</span></button>
+  </nav>
+  <div class="cmd-group" id="grp-color">
+    <span class="cmd-label" id="lbl-color">Color the map by</span>
+    <div class="chips" role="group" aria-labelledby="lbl-color">
+      <button type="button" class="cb on" data-cb="pledge" aria-pressed="true">Pledge</button>
+      <button type="button" class="cb" data-cb="confed" aria-pressed="false">Confederation</button>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="mapcol">
+    <div class="mapwrap">
+      <div class="mapctl" role="group" aria-label="Map controls">
+        <span id="zoomgrp" class="zoomgrp">
+          <button type="button" class="zb" data-zoom="in" aria-label="Zoom in">+</button>
+          <button type="button" class="zb" data-zoom="out" aria-label="Zoom out">−</button>
+          <button type="button" class="zb" data-zoom="reset" aria-label="Reset zoom">Reset</button>
+        </span>
+        <button type="button" class="zb" id="tiles-btn" aria-pressed="false">All 211 as tiles</button>
+      </div>
+      <div class="sharewrap" data-draw="share" data-source="associations mapgeo events facts"></div>
+      <div class="map" data-draw="map" data-source="associations mapgeo events"></div>
+      <div class="tilepane" id="tilepane" hidden>
+        <div class="grid" data-draw="grid" data-source="associations events"></div>
+      </div>
+      <p class="map-hint" id="map-hint">Drag to pan. Zoom with the buttons, or Ctrl or Cmd and scroll.</p>
+    </div>
+  </div>
+
+  <aside class="side">
+    <div class="panes">
+
+      <section class="pane" id="pane-map" aria-label="Map details">
+        <p class="vhint">Click any country to see its pledge, sources and history.</p>
+        <div class="detail" data-draw="detail" data-source="associations events"></div>
+        <p class="prose" id="lede">Colors show the public position reported for each of the <b data-draw="fact" data-source="facts" data-field="value" data-where="key=members">—</b> voting associations. Only <b data-draw="cnt" data-source="tally" data-field="count" data-where="key=inf_d">—</b> have declared for Infantino themselves; the rest come from confederation endorsements. Ballots are secret, so these are pledges, not votes.</p>
+        <h3 class="sechead">Latest changes</h3>
+        <ol class="al-list" data-draw="latest" data-source="events associations"></ol>
+        <button type="button" class="linkbtn" data-goto="timeline">See the full timeline</button>
+      </section>
+
+      <section class="pane" id="pane-whatif" aria-label="What-if" hidden>
+        <p class="vhint">Pick a candidate, then click countries to give them that vote. The scoreboard above updates as you go.</p>
+        <div class="wi">
+          <div class="wi-row" role="group" aria-label="Candidate to assign">
+            <button type="button" class="brush on" data-brush="inf" aria-pressed="true"><i class="sw c-inf"></i>Infantino</button>
+            <button type="button" class="brush" data-brush="diallo" aria-pressed="false"><i class="sw c-diallo"></i>Diallo</button>
+            <button type="button" class="brush" data-brush="tashima" aria-pressed="false"><i class="sw c-tashima"></i>Tashima</button>
+            <button type="button" class="brush" data-brush="none" aria-pressed="false"><i class="sw c-none"></i>Clear pick</button>
+          </div>
+          <span class="cmd-label">Start from</span>
+          <div class="wi-row" role="group" aria-label="Starting points">
+            <button type="button" class="act" data-act="reported">Reported endorsements</button>
+            <button type="button" class="act" data-act="declared">Declared only</button>
+            <button type="button" class="act" data-act="clear">Blank map</button>
+          </div>
+          <span class="cmd-label">What if a confederation's endorsement does not hold?</span>
+          <div class="wi-row" role="group" aria-label="Endorsement does not hold">
+            <button type="button" class="act" data-act="drop-CAF">CAF</button>
+            <button type="button" class="act" data-act="drop-AFC">AFC</button>
+            <button type="button" class="act" data-act="drop-CONMEBOL">CONMEBOL</button>
+            <button type="button" class="act" data-act="drop-UEFA">UEFA</button>
+          </div>
+        </div>
+        <div class="detail" data-draw="detail" data-source="associations events"></div>
+        <p class="prose">Your changes stay in your browser. They are not saved or shared. In a three-way race the first round needs more than a simple majority, so treat this as a thought experiment.</p>
+      </section>
+
+      <section class="pane" id="pane-timeline" aria-label="Timeline" hidden>
+        <p class="vhint">Drag the slider or press Play to watch the pledges build. Click a country to see only its changes.</p>
+        <div class="replay" id="replay-bar" data-draw="replay" data-source="associations events steps"></div>
+        <p class="al-note" data-draw="alertnote" data-source="events"></p>
+        <ol class="al-list" data-draw="alerts" data-source="events associations"></ol>
+        <p class="prose">The replay uses only events that have a date. Positions with no dated report show in pale gray until the last step, which is today.</p>
+      </section>
+
+      <section class="pane" id="pane-learn" aria-label="Learn" hidden>
+        <p class="vhint">Click any country on the map to jump back to its pledge.</p>
+
+        <details class="sec" open>
+          <summary>The candidates</summary>
+          <div class="cands" data-draw="cands" data-source="candidates"></div>
+        </details>
+
+        <details class="sec">
+          <summary>How the election works</summary>
+          <div class="how">
+            <div class="how-item">
+              <h3>The FIFA Congress picks the president</h3>
+              <p>The Congress is FIFA's top decision-making body. It meets in <b data-draw="fact" data-source="facts" data-field="value" data-where="key=venue">—</b> on <b data-draw="fact" data-source="facts" data-field="value" data-where="key=congress">—</b>.</p>
+            </div>
+            <div class="how-item">
+              <h3>Associations vote, not people or governments</h3>
+              <p>Each of the <b data-draw="fact" data-source="facts" data-field="value" data-where="key=members">—</b> member associations gets one vote, whatever its size. That is why a small island federation counts as much as Brazil.</p>
+            </div>
+            <div class="how-item">
+              <h3>Who can run</h3>
+              <p>A candidate needs the backing of <b data-draw="fact" data-source="facts" data-field="value" data-where="key=nominators">—</b> member associations. FIFA's electoral committee then decides who is admitted, and associations are told by <b data-draw="fact" data-source="facts" data-field="value" data-where="key=notify_by">—</b>.</p>
+            </div>
+            <div class="how-item">
+              <h3>How a winner is decided</h3>
+              <p>With two candidates, more than half the votes wins: <b data-draw="fact" data-source="facts" data-field="value" data-where="key=majority">—</b> if all associations vote. With three or more, Al Jazeera reports that the first round needs a two-thirds majority and the lowest candidate drops out each round until two remain, then a simple majority decides. The FIFA Statutes have the exact rules.</p>
+            </div>
+            <div class="how-item">
+              <h3>The ballot is secret</h3>
+              <p>Public pledges and confederation endorsements are not binding. Jordan's Prince Ali bin Hussein has called for ending the secret ballot. Until then, this map shows what has been said, not how anyone will vote.</p>
+            </div>
+            <div class="how-item">
+              <h3>The term-limit question</h3>
+              <p>FIFA presidents can serve three terms. Critics argue Infantino has already used his three. FIFA's Council ruled in December 2022 that his first three years do not count, and the reasoning was not made public.</p>
+            </div>
+          </div>
+        </details>
+
+        <details class="sec">
+          <summary>Latest headlines</summary>
+          <p class="prose">Headlines are added by hand and can lag behind events. Each link goes to the original report.</p>
+          <ol class="news" data-draw="news" data-source="news"></ol>
+        </details>
+
+        <details class="sec">
+          <summary>How to read the map, and sources</summary>
+          <ul class="method-list">
+            <li><b>Declared</b> means the association's own public statement was reported, or, for Diallo and Tashima, that their home federations put them forward.</li>
+            <li><b>Via confederation</b> means no statement of its own was found, and its confederation has endorsed a candidate: CAF, the AFC and CONMEBOL for Infantino, UEFA for Diallo. These are not binding.</li>
+            <li><b>Europe</b> is shaded for Diallo because UEFA says its associations unanimously back him. Many of those federations had earlier withdrawn support from Infantino, and each association's detail says so where it was reported. Switzerland had not withdrawn as of early August.</li>
+            <li><b>The AFC</b> endorsed Infantino in April and October, and called for a review of FIFA's leadership in August. Reports differ, so treat Asia as the least settled bloc.</li>
+            <li><b>No position found</b> means no public statement was found. It does not mean undecided. CONCACAF and the OFC have not endorsed anyone.</li>
+            <li><b>Updates</b> are added by hand or by a scheduled check that only applies sourced reports, so the feed can lag behind events. The data date at the top says when it was last compiled.</li>
+            <li><b>Sources:</b> news reports, FIFA's own media release, and Wikipedia's page on the 77th Congress, which is a secondary source. FIFA's statutes were not available, so check them before relying on a threshold.</li>
+          </ul>
+        </details>
+
+        <p class="war-foot">FIFA Election War Room, created by Danny Navarro (<b>@travelfutbolfan</b>). Corrections with a source are welcome.</p>
+      </section>
+
+    </div>
+  </aside>
+</div>
+
+<footer class="bottom">
+  <div class="bottom-main">
+    <div class="legend" id="legend-reported" role="group" aria-label="Filter the map by position">
+      <button type="button" class="lg" data-focus="inf_d"><i class="sw s-inf_d"></i>Infantino, declared <b data-draw="cnt" data-source="tally" data-field="count" data-where="key=inf_d">—</b></button>
+      <button type="button" class="lg" data-focus="inf_b"><i class="sw s-inf_b"></i>Infantino, via bloc <b data-draw="cnt" data-source="tally" data-field="count" data-where="key=inf_b">—</b></button>
+      <button type="button" class="lg" data-focus="diallo_d"><i class="sw s-diallo_d"></i>Diallo, declared <b data-draw="cnt" data-source="tally" data-field="count" data-where="key=diallo_d">—</b></button>
+      <button type="button" class="lg" data-focus="diallo_b"><i class="sw s-diallo_b"></i>Diallo, via UEFA <b data-draw="cnt" data-source="tally" data-field="count" data-where="key=diallo_b">—</b></button>
+      <button type="button" class="lg" data-focus="tashima"><i class="sw s-tashima"></i>Tashima, declared <b data-draw="cnt" data-source="tally" data-field="count" data-where="key=tashima">—</b></button>
+      <button type="button" class="lg" data-focus="anti"><i class="sw s-anti"></i>Against Infantino <b data-draw="cnt" data-source="tally" data-field="count" data-where="key=anti">—</b></button>
+      <button type="button" class="lg" data-focus="und"><i class="sw s-und"></i>No position found <b data-draw="cnt" data-source="tally" data-field="count" data-where="key=und">—</b></button>
+    </div>
+
+    <div class="legend" id="legend-blocs" role="group" aria-label="Filter the map by confederation" hidden>
+      <button type="button" class="lg" data-focus="UEFA"><i class="sw k-UEFA"></i>UEFA, Europe</button>
+      <button type="button" class="lg" data-focus="CAF"><i class="sw k-CAF"></i>CAF, Africa</button>
+      <button type="button" class="lg" data-focus="AFC"><i class="sw k-AFC"></i>AFC, Asia</button>
+      <button type="button" class="lg" data-focus="CONCACAF"><i class="sw k-CONCACAF"></i>CONCACAF, North and Central America</button>
+      <button type="button" class="lg" data-focus="OFC"><i class="sw k-OFC"></i>OFC, Oceania</button>
+      <button type="button" class="lg" data-focus="CONMEBOL"><i class="sw k-CONMEBOL"></i>CONMEBOL, South America</button>
+    </div>
+
+    <p class="map-note" id="note-whatif" hidden>Colors show your scenario. Gray means no pick yet. The bar at the top counts toward 106.</p>
+    <p class="map-note" id="note-timeline" hidden>Colors show the position on the date shown in the timeline. Pale gray means nothing dated yet.</p>
+    <p class="map-note" id="note-learn" hidden>The map still shows today's reported pledges.</p>
+  </div>
+
+  <nav class="socials" aria-label="Follow Danny Navarro">
+    <span class="cmd-label">Follow <b>@travelfutbolfan</b></span>
+    <div class="soc-row">
+      <a class="soc" href="https://www.instagram.com/travelfutbolfan/" target="_blank" rel="noopener noreferrer">Instagram</a>
+      <a class="soc" href="https://www.tiktok.com/@travelfutbolfan" target="_blank" rel="noopener noreferrer">TikTok</a>
+      <a class="soc" href="https://www.youtube.com/@travelfutbolfan" target="_blank" rel="noopener noreferrer">YouTube</a>
+      <a class="soc" href="https://www.facebook.com/travelfutbolfan" target="_blank" rel="noopener noreferrer">Facebook</a>
+      <a class="soc" href="https://www.threads.com/@travelfutbolfan" target="_blank" rel="noopener noreferrer">Threads</a>
+    </div>
+  </nav>
+</footer>
+
+</div>
+
+</div>
+<script src="d3.min.js"></script>
+<script src="dash-shim.js"></script>
+<script src="war.js"></script>
+<script>dash.start();</script>
+</body>
+</html>
